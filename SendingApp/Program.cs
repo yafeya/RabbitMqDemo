@@ -13,26 +13,17 @@ namespace SendingApp
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.QueueDeclare(queue: "task_queue",
-                    durable: true,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: null);
+                channel.ExchangeDeclare(exchange: "logs", type: "fanout");
 
                 foreach (var arg in args)
                 {
-                    var message = GetMessage(new []{ arg });
+                    var message = GetMessage(new[] {arg});
                     var body = Encoding.UTF8.GetBytes(message);
-
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-
-                    channel.BasicPublish(exchange: "",
-                        routingKey: "task_queue",
-                        basicProperties: properties,
+                    channel.BasicPublish(exchange: "logs",
+                        routingKey: "",
+                        basicProperties: null,
                         body: body);
                     Console.WriteLine(" [x] Sent {0}", message);
-                    Thread.Sleep(500);
                 }
             }
 
@@ -42,7 +33,9 @@ namespace SendingApp
 
         private static string GetMessage(string[] args)
         {
-            return ((args.Length > 0) ? string.Join(" ", args) : "Hello World!");
+            return ((args.Length > 0)
+                ? string.Join(" ", args)
+                : "info: Hello World!");
         }
     }
 }
