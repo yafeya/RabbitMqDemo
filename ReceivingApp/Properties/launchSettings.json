@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReceivingApp": {
+      "commandName": "Project",
+      "commandLineArgs": "info"
+    }
+  }
+}
