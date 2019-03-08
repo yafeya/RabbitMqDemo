@@ -11,33 +11,29 @@ namespace SendingApp
     {
         static void Main(string[] args)
         {
-            var severityDic = new Dictionary<int, string>();
-            severityDic[0] = "info";
-            severityDic[1] = "warning";
-            severityDic[2] = "error";
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(exchange: "direct_logs",
-                    type: "direct");
+                channel.ExchangeDeclare(exchange: "topic_logs",
+                    type: "topic");
 
-                for (int i = 0; i < args.Length; i++)
+                foreach (var arg in args)
                 {
-                    var severityIndex = i % 3;
-                    var severity = severityDic[severityIndex];
-                    var message = args[i];
+                    var parts = arg.Split(new[] { ':' }, StringSplitOptions.None);
+                    if (parts.Length < 2) continue;
+                    var serverity = parts[0];
+                    var message = parts[1];
                     var body = Encoding.UTF8.GetBytes(message);
-                    channel.BasicPublish(exchange: "direct_logs",
-                        routingKey: severity,
+                    channel.BasicPublish(exchange: "topic_logs",
+                        routingKey: serverity,
                         basicProperties: null,
                         body: body);
-                    Console.WriteLine(" [x] Sent '{0}':'{1}'", severity, message);
+                    Console.WriteLine(" [x] Sent '{0}':'{1}'", serverity, message);
                 }
             }
 
-            Console.WriteLine(" Press [enter] to exit.");
-            Console.ReadLine();
+            Console.ReadKey();
         }
     }
 }

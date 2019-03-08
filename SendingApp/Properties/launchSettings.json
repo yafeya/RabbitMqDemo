@@ -2,7 +2,7 @@
   "profiles": {
     "SendingApp": {
       "commandName": "Project",
-      "commandLineArgs": "message1...... message2...... message3......"
+      "commandLineArgs": "kern.info:message1...... kern.warning:message2...... kern.error:message3...... os.info:message4...... os.warning:message5...... os.error:message6......"
     }
   }
 }
